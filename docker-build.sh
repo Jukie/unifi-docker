@@ -29,8 +29,8 @@ if [ "x${1}" == "x" ]; then
     exit 0
 fi
 
-apt-get update
-apt-get install -qy --no-install-recommends \
+apt-get -qq update
+apt-get -qq install -qy --no-install-recommends \
     apt-transport-https \
     curl \
     dirmngr \
@@ -38,14 +38,14 @@ apt-get install -qy --no-install-recommends \
     gpg-agent \
     openjdk-8-jre-headless \
     procps \
-    libcap2-bin
+    libcap2-bin > /dev/null
 tryfail apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
 echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.6.list
-apt-get update
+apt-get update -qq
 echo "deb http://www.ubnt.com/downloads/unifi/debian unifi5 ubiquiti" > /etc/apt/sources.list.d/20ubiquiti.list
 tryfail apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 06E85760C0A52C50
-curl -L -o ./unifi.deb "${1}"
-apt -qy install mongodb-org ./unifi.deb
+curl -s -L -o ./unifi.deb "${1}"
+apt -qqy install mongodb-org ./unifi.deb > /dev/null
 rm -f ./unifi.deb
 chown -R unifi:unifi /usr/lib/unifi
 rm -rf /var/lib/apt/lists/*

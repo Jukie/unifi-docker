@@ -33,11 +33,11 @@ RUN set -ex \
         gpg \
         wget \
     ' \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends $fetchDeps \
+    && apt-get -qq update \
+    && apt-get -qq install -y --no-install-recommends $fetchDeps > /dev/null \
     && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
-    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+    && wget -q -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+    && wget -q -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
 # verify the signature
     && export GNUPGHOME="$(mktemp -d)" \
     && for server in $(shuf -e ha.pool.sks-keyservers.net \
@@ -53,7 +53,7 @@ RUN set -ex \
 #### temp, verification step breaks buildx ####
 ### verify that the binary works
 ##    && gosu nobody true \
-    && apt-get purge -y --auto-remove $fetchDeps \
+    && apt-get -qq purge -y --auto-remove $fetchDeps > /dev/null \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /usr/unifi \
